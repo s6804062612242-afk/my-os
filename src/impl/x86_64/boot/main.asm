@@ -91,7 +91,7 @@ enable_paging:
     or eax, 1 << 5
     mov cr4, eax
     ;enable long mode
-    mov ecx, 0xcC000080
+    mov ecx, 0xC0000080
     rdmsr
     or eax, 1 << 8
     wrmsr
@@ -102,10 +102,10 @@ enable_paging:
     ret
 
 error:
-    mov dword [0xb8000], 0x4f524f45
-    mov dword [0xb8004], 0x4f3a4f52
-    mov dword [0xb8000], 0x4f204f20
-    mov byte [0xb800a], al
+    mov dword [0xb8000], 0x4f524f45  ; พิมพ์ "ER"
+    mov dword [0xb8004], 0x4f3a4f52  ; พิมพ์ "R:"
+    mov dword [0xb8008], 0x4f204f20  ; <--- เปลี่ยนเป็น 0xb8008 พิมพ์ "  " (ช่องว่าง)
+    mov byte [0xb800a], al           ; พิมพ์ รหัส Error (M, C หรือ L)
     hlt
 
 
@@ -113,11 +113,11 @@ error:
 section .bss
 align 4096
 page_table_l4:
-    resq 4096
+    resb 4096
 page_table_l3:
-    resq 4096
+    resb 4096
 page_table_l2:
-    resq 4096
+    resb 4096
 stack_bottom:
     resb 4096 * 4
 stack_top:
